@@ -6,18 +6,18 @@ int main()
 {
     int d=0;
     int x[100], y[100];
-    FLUTE_TREE flutetree;
+    Flute::Tree flutetree;
     int flutewl;
     
     while (!feof(stdin)) {
         scanf("%d %d\n", &x[d], &y[d]);
         d++;
     }
-    FLUTEPTR flute1 = flute_init(POWVFILE, PORTFILE);
+    Flute::FluteState *flute1 = Flute::flute_init(FLUTE_POWVFILE, FLUTE_PORTFILE);
 
-    flutetree = flute(flute1, d, x, y, ACCURACY);
+    flutetree = Flute::flute(flute1, d, x, y, FLUTE_ACCURACY);
     printf("FLUTE wirelength = %d\n", flutetree.length);
 
-    flutewl = flute_wl(flute1, d, x, y, ACCURACY);
+    flutewl = Flute::flute_wl(flute1, d, x, y, FLUTE_ACCURACY);
     printf("FLUTE wirelength (without RSMT construction) = %d\n", flutewl);
 }

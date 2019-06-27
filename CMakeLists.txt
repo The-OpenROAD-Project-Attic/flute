@@ -17,14 +17,14 @@ message(STATUS "Build CXX_FLAGS: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 message(STATUS "CXX_FLAGS: ${COMPILE_OPTIONS}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
-add_library(flute ${FLUTE_HOME}/flute.c)
+add_library(flute ${FLUTE_HOME}/flute.cpp)
 
 target_include_directories(flute PUBLIC ${FLUTE_HOME})
 
+target_compile_options(flute PUBLIC -std=c++11)
+
 add_executable(rand-pts ${FLUTE_HOME}/rand-pts.c)
 
-add_executable(flute-net ${FLUTE_HOME}/flute-net.c)
+add_executable(flute-net ${FLUTE_HOME}/flute-net.cpp)
 
 target_link_libraries(flute-net flute)
-
-

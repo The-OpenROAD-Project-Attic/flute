@@ -1,8 +1,9 @@
 # Flute 3.1
 
 Flute 3.1 with UTD improvments using CMake instead of Fred Flintstone
-era autotools support, remove UTD utility dependency, restore original
-test programs rand-pts and flute-net.
+era autotools, remove UTD utility dependency, restore original test
+program flute-net, define a flute namespace and add prefixes to macro
+definitions.
 
 ### UTD-flute
 

@@ -15,76 +15,68 @@
 #ifndef FLUTE_H
 #define FLUTE_H
 
-#ifdef __cplusplus
-
-extern "C" {
-
-#endif /* __cplusplus */
-
 /*****************************/
 /*  User-Defined Parameters  */
 /*****************************/
 /* Flute is now dynamic #define MAXD 3000   max. degree that can be handled */
-#define ACCURACY 3  		// Default accuracy
+#define FLUTE_ACCURACY 3  		// Default accuracy
 #define FLUTE_ROUTING 1   	// 1 to construct routing, 0 to estimate WL only
-#define LOCAL_REFINEMENT 0      // Suggestion: Set to 1 if ACCURACY >= 5
-#define REMOVE_DUPLICATE_PIN 0  // Remove dup. pin for flute_wl() & flute()
+#define FLUTE_LOCAL_REFINEMENT 0      // Suggestion: Set to 1 if ACCURACY >= 5
+#define FLUTE_REMOVE_DUPLICATE_PIN 0  // Remove dup. pin for flute_wl() & flute()
 
 /* Types of tables */
-#define POWVFILE "POWV9.dat"        // LUT for POWV (Wirelength Vector)
-#define POSTFILE "POST9.dat"        // LUT for POST (Steiner Tree)
-#define PORTFILE "PORT9.dat"        // LUT for POST (Routing Tree)
+#define FLUTE_POWVFILE "POWV9.dat"        // LUT for POWV (Wirelength Vector)
+#define FLUTE_POSTFILE "POST9.dat"        // LUT for POST (Steiner Tree)
+#define FLUTE_PORTFILE "PORT9.dat"        // LUT for POST (Routing Tree)
 
-#ifndef DTYPE   // Data type for distance
-#define DTYPE int
+#ifndef FLUTE_DTYPE   // Data type for distance
+#define FLUTE_DTYPE int
 #endif
 
 
 #ifdef FLUTE_INTERNAL_VARS
-
 #include <flute_int.h>
-
-#else
-
-typedef struct flute_rec * FLUTEPTR ;
-
 #endif /* FLUTE_INTERNAL_VARS */
 
-typedef struct flute_branch_rec {
-  DTYPE x, y ;   	// starting point of the branch
-  int n ;        	// index of neighbor
-} FLUTE_BRANCH, *FLUTE_BRANCHPTR ;
+namespace Flute {
 
-typedef struct flute_tree_rec {	/* in proper packing order */
-    FLUTE_BRANCHPTR branch ;   	// array of tree branches
-    DTYPE length;   		// total wirelength
+typedef struct flute_rec FluteState ;
+
+typedef struct {
+  FLUTE_DTYPE x, y ;   	// starting point of the branch
+  int n ;        	// index of neighbor
+} Branch ;
+
+typedef struct {	/* in proper packing order */
+    Branch *branch ;   	// array of tree branches
+    FLUTE_DTYPE length;		// total wirelength
     int deg ;   		// degree
-} FLUTE_TREE, *FLUTE_TREEPTR ;
+} Tree ;
 
 // User-Callable Functions
-extern FLUTEPTR flute_init( char *wirelength_vector_file, char *steiner_tree_file ) ;
-extern void flute_free( FLUTEPTR flute_p ) ;
-extern DTYPE flute_wl( FLUTEPTR flute_p,int d, DTYPE *x, DTYPE *y, int acc);
+FluteState *flute_init( const char *wirelength_vector_file, const char *steiner_tree_file ) ;
+void flute_free( FluteState * flute_p ) ;
+FLUTE_DTYPE flute_wl( FluteState *flute_p,int d, FLUTE_DTYPE *x, FLUTE_DTYPE *y, int acc);
 
 //Macro: DTYPE flutes_wl(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
-extern FLUTE_TREE flute( FLUTEPTR flute_p, int d, DTYPE *x, DTYPE *y, int acc);
+Tree flute( FluteState *flute, int d, FLUTE_DTYPE *x, FLUTE_DTYPE *y, int acc);
 
 // Free memory associated with flute tree.
-extern void flute_free_tree( FLUTEPTR flute_p, FLUTE_TREE tree ) ;
+void free_tree( FluteState * flute_p, Tree tree ) ;
 
-//Macro: FLUTE_TREE flutes( FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE *ys, int *s, int acc);
-extern DTYPE flute_wirelength( FLUTE_TREE tree_p) ;
-extern void flute_printtree( FLUTE_TREE tree_p ) ;
-extern void flute_plottree( FLUTE_TREE tree_p ) ;
+//Macro: Tree flutes( FluteState * flute_p,int d, DTYPE *xs, DTYPE *ys, int *s, int acc);
+FLUTE_DTYPE wirelength( Tree tree) ;
+void printtree( Tree tree ) ;
+void plottree( Tree tree ) ;
 
 // Other useful functions
-extern DTYPE flutes_wl_LD(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE *ys, int *s);
-extern DTYPE flutes_wl_MD(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE *ys, int *s, int acc);
-extern DTYPE flutes_wl_RDP(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE ys[], int *s, int acc);
-extern FLUTE_TREE flutes_LD(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE ys[], int *s);
-extern FLUTE_TREE flutes_MD(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE ys[], int *s, int acc);
-extern FLUTE_TREE flutes_HD(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE ys[], int *s, int acc);
-extern FLUTE_TREE flutes_RDP(FLUTEPTR flute_p,int d, DTYPE *xs, DTYPE ys[], int *s, int acc);
+FLUTE_DTYPE flutes_wl_LD(FluteState *flute,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE *ys, int *s);
+FLUTE_DTYPE flutes_wl_MD(FluteState *flute,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE *ys, int *s, int acc);
+extern FLUTE_DTYPE flutes_wl_RDP(FluteState * flute_p,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE ys[], int *s, int acc);
+extern Tree flutes_LD(FluteState * flute_p,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE ys[], int *s);
+extern Tree flutes_MD(FluteState * flute_p,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE ys[], int *s, int acc);
+extern Tree flutes_HD(FluteState * flute_p,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE ys[], int *s, int acc);
+extern Tree flutes_RDP(FluteState * flute_p,int d, FLUTE_DTYPE *xs, FLUTE_DTYPE ys[], int *s, int acc);
 
 #if REMOVE_DUPLICATE_PIN==1
   #define flutes_wl(flute_xz, d, xs, ys, s, acc) flutes_wl_RDP(flute_xz, d, xs, ys, s, acc) 

@@ -15,18 +15,11 @@
 #ifndef FLUTE_INT_H
 #define FLUTE_INT_H
 
-#ifdef __cplusplus
-
-extern "C" {
-
-#endif /* __cplusplus */
+namespace Flute {
 
 /*************************************/
 /* Internal Parameters and Functions */
 /*************************************/
-#define POWVFILE "POWV9.dat"        // LUT for POWV (Wirelength Vector)
-#define POSTFILE "POST9.dat"        // LUT for POST (Steiner Tree)
-#define PORTFILE "PORT9.dat"        // LUT for POST (Routing Tree)
 #define FLUTE_D 9                   // LUT is used for d <= D, D <= 9
 #define TAU(A) (8+1.3*(A))
 #define D1(A) (25+120/((A)*(A)))     // flute_mr is used for D1 < d <= D2
@@ -60,7 +53,7 @@ typedef struct csoln1 {
 } FLUTE_SOLN, *FLUTE_SOLNPTR ;
 
 typedef struct point {
-    DTYPE x, y;
+    FLUTE_DTYPE x, y;
     int o;
 } FLUTE_POINT, *FLUTE_POINTPTR ;
 
@@ -71,11 +64,8 @@ typedef struct flute_rec {
   FLUTE_SOLNPTR *storage ;
   int num_alloc ;
   int num_used ;
-} FLUTEBOX, *FLUTEPTR ;
+} FLUTEBOX;
 
-
-#ifdef __cplusplus
-} ;
-#endif /* __cplusplus */
+} // namespace
 
 #endif /* FLUTE_INT_H */
